@@ -7,7 +7,7 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-const SERVICE_HEADER = 'api.mizhoubaobei.top-CDN-EdgeOne-Proxy';
+const SERVICE_HEADER = 'MZAPI/EdgeOne-Proxy';
 
 @Injectable()
 export class CdnEdgeoneProxyInterceptor implements NestInterceptor {
