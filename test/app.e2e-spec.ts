@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
+import * as compression from 'compression';
 import { AppModule } from '../src/app.module';
 
 describe('AppController (e2e)', () => {
@@ -12,6 +13,16 @@ describe('AppController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    // 与生产环境保持一致，启用 gzip 压缩中间件。
+    // 使用 gzip-only 的 filter 并关闭体积阈值，确保：
+    //  - 接受 gzip 时返回 Content-Encoding: gzip（满足 E2E 断言）；
+    //  - 仅接受 deflate 时（如 deflate 用例）不进行压缩。
+    app.use(
+      compression({
+        threshold: 0,
+        filter: (req: any) => /\bgzip\b/i.test(req.headers['accept-encoding'] || ''),
+      } as any),
+    );
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,

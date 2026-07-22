@@ -1,7 +1,9 @@
-import { Controller, Post, Body, Headers } from '@nestjs/common';
+import { Controller, All, Body, Headers, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { Logger } from '@nestjs/common';
 import { ImageModerationService } from '../service';
 import { ImageModerationDto } from '../DTO';
+import { UnauthorizedException } from '@nestjs/common';
 
 @Controller('aliyun')
 /**
@@ -24,10 +26,11 @@ export class ImageModerationController {
    * @param headers - 请求头信息
    * @returns 返回图片审核结果
    */
-  @Post('image-moderation')
+  @All('image-moderation')
   async imageModeration(
     @Body() imageModerationDto: ImageModerationDto,
     @Headers() headers: Record<string, string>,
+    @Res({ passthrough: true }) res?: Response,
   ) {
     this.logger.log(
       `收到图片审核请求，服务类型: ${imageModerationDto.service}`,
@@ -41,6 +44,19 @@ export class ImageModerationController {
       );
       return result;
     } catch (error) {
+      // 鉴权/凭证类失败：以 401 成功响应路径返回，
+      // 确保响应侧拦截器（Service/Server-Timing/Content-Digest/gzip 等）仍会执行。
+      if (error instanceof UnauthorizedException) {
+        this.logger.error(`图片审核失败: ${error.message}`);
+        if (res) {
+          res.status(401);
+        }
+        return {
+          statusCode: 401,
+          message: error.message,
+          error: 'Unauthorized',
+        };
+      }
       this.logger.error(`图片审核失败: ${error.message}`, error.stack);
       throw error;
     }
