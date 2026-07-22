@@ -19,7 +19,7 @@ jobs:
     steps:
     - uses: actions/stale@v9  # 使用stale动作v9版本
       with:
-        repo-token: ${{ secrets.TOKEN }}  # 使用仓库token进行认证
+        repo-token: ${{ secrets.GITHUB_TOKEN }}  # 使用GitHub自动提供的内置token进行认证
 
         # ========== Issue 配置 ==========
         stale-issue-message: |
