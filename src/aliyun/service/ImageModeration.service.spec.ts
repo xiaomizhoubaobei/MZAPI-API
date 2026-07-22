@@ -133,7 +133,7 @@ describe('ImageModerationService', () => {
         expect.objectContaining({
           accessKeyId: 'test-key-id',
           accessKeySecret: 'test-key-secret',
-          endpoint: 'green-cip.cn-shanghai.aliyuncs.com',
+          endpoint: 'https://green-cip.cn-shanghai.aliyuncs.com',
           apiVersion: '2022-03-02',
         }),
       );
