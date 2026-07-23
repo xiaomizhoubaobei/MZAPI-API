@@ -77,7 +77,7 @@ describe('AppController (e2e)', () => {
         .post('/aliyun/image-moderation')
         .send(validRequest)
         .expect(401)
-        .expect('Service', 'api.mizhoubaobei.top-CDN-EdgeOne-Proxy');
+        .expect('Service', 'MZAPI/EdgeOne-Proxy');
     });
 
     it('should set Cache-Control header', () => {
