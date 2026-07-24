@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@alicloud/pop-core": "^1.8.0",
+    "@aws-sdk/client-s3": "^3.1094.0",
     "@nestjs/common": "^10.4.22",
     "@nestjs/core": "^11.1.18",
     "@nestjs/platform-express": "^11.0.13",

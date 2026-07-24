@@ -10,3 +10,4 @@ export * from './request-id.interceptor';
 export * from './logging.interceptor';
 export * from './timeout.interceptor';
 export * from './body-size-limit.interceptor';
+export * from './sensitive-data.interceptor';

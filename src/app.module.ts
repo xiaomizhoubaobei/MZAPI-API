@@ -13,6 +13,9 @@ import {
   ServerTimingInterceptor,
   TimeoutInterceptor,
   BodySizeLimitInterceptor,
+  RequestIdInterceptor,
+  LoggingInterceptor,
+  SensitiveDataInterceptor,
 } from './interceptors';
 
 @Module({
@@ -58,6 +61,18 @@ import {
     {
       provide: APP_INTERCEPTOR,
       useClass: BodySizeLimitInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: RequestIdInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: SensitiveDataInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
     },
   ],
 })
