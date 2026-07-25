@@ -13,10 +13,10 @@ export class OssUploader {
   private enabled: boolean;
 
   private constructor() {
-    const region = process.env.OSS_REGION || 'oss-cn-hangzhou';
+    const region = process.env.OSS_REGION || 'oss-cn-shanghai';
     const accessKeyId = process.env.OSS_ACCESS_KEY_ID;
     const accessKeySecret = process.env.OSS_ACCESS_KEY_SECRET;
-    const endpoint = process.env.OSS_ENDPOINT;
+    const endpoint = process.env.OSS_ENDPOINT || 'https://oss-cn-shanghai-internal.aliyuncs.com';
     this.bucket = process.env.OSS_BUCKET || '';
 
     if (accessKeyId && accessKeySecret && this.bucket) {
