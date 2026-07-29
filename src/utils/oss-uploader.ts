@@ -1,47 +1,33 @@
-import OSS from 'ali-oss';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Logger } from '@nestjs/common';
 
 /**
- * 阿里云 OSS 上传器（基于官方 ali-oss SDK）
+ * 本地 OSS 上传器
+ *
+ * 将文件写入 OSS 桶挂载的本地目录（默认 data/oss）
  * 单例模式，启动时从环境变量读取配置
  */
 export class OssUploader {
   private static instance: OssUploader;
   private readonly logger = new Logger(OssUploader.name);
-  private client: OSS | null = null;
-  private bucket: string;
+  private baseDir: string;
   private enabled: boolean;
 
   private constructor() {
-    const region = process.env.OSS_REGION || 'oss-cn-shanghai';
-    const accessKeyId = process.env.OSS_ACCESS_KEY_ID;
-    const accessKeySecret = process.env.OSS_ACCESS_KEY_SECRET;
-    const endpoint = process.env.OSS_ENDPOINT || 'https://oss-cn-shanghai-internal.aliyuncs.com';
-    this.bucket = process.env.OSS_BUCKET || '';
+    this.baseDir = process.env.OSS_BASE_DIR || 'data/oss';
+    this.enabled = true;
 
-    if (accessKeyId && accessKeySecret && this.bucket) {
-      const config: OSS.Options = {
-        region,
-        accessKeyId,
-        accessKeySecret,
-        bucket: this.bucket,
-        authorizationV4: true,
-      };
-
-      // 如果指定了自定义 endpoint（内网/传输加速/自定义域名等），覆盖默认 endpoint
-      if (endpoint) {
-        config.endpoint = endpoint;
-      }
-
-      this.client = new OSS(config);
-      this.enabled = true;
+    // 确保基础目录存在
+    try {
+      fs.mkdirSync(this.baseDir, { recursive: true });
       this.logger.log(
-        `OSS uploader initialized, region=${region}, bucket=${this.bucket}`,
+        `OSS uploader initialized, baseDir=${path.resolve(this.baseDir)}`,
       );
-    } else {
+    } catch (error) {
       this.enabled = false;
-      this.logger.warn(
-        'OSS configuration incomplete (missing OSS_ACCESS_KEY_ID/OSS_ACCESS_KEY_SECRET/OSS_BUCKET), API log upload disabled',
+      this.logger.error(
+        `Failed to create OSS base directory ${this.baseDir}: ${(error as Error).message}`,
       );
     }
   }
@@ -54,20 +40,23 @@ export class OssUploader {
   }
 
   /**
-   * 异步上传 JSON 内容到 OSS
-   * @param key - OSS 对象 key
+   * 写入 JSON 内容到本地 OSS 目录
+   * @param key - 文件相对路径（如 YYYY/MM/DD/requestId.json）
    * @param body - JSON 字符串内容
    */
   async upload(key: string, body: string): Promise<void> {
-    if (!this.enabled || !this.client) return;
+    if (!this.enabled) return;
 
     try {
-      await this.client.put(key, Buffer.from(body), {
-        mime: 'application/json',
-      });
-      this.logger.debug(`Log uploaded to OSS: ${key}`);
+      const filePath = path.join(this.baseDir, key);
+      const dir = path.dirname(filePath);
+
+      await fs.promises.mkdir(dir, { recursive: true });
+      await fs.promises.writeFile(filePath, body, 'utf-8');
+
+      this.logger.debug(`Log saved to: ${filePath}`);
     } catch (error) {
-      this.logger.error(`Failed to upload log to OSS: ${error.message}`);
+      this.logger.error(`Failed to save log: ${(error as Error).message}`);
     }
   }
 

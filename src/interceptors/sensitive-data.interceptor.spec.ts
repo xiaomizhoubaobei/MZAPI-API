@@ -5,18 +5,7 @@ describe('SensitiveDataInterceptor', () => {
   let interceptor: SensitiveDataInterceptor;
 
   beforeEach(() => {
-    process.env.OSS_ENDPOINT = '';
-    process.env.OSS_ACCESS_KEY_ID = '';
-    process.env.OSS_ACCESS_KEY_SECRET = '';
-    process.env.OSS_BUCKET = '';
     interceptor = new SensitiveDataInterceptor();
-  });
-
-  afterEach(() => {
-    delete process.env.OSS_ENDPOINT;
-    delete process.env.OSS_ACCESS_KEY_ID;
-    delete process.env.OSS_ACCESS_KEY_SECRET;
-    delete process.env.OSS_BUCKET;
   });
 
   it('should be defined', () => {
