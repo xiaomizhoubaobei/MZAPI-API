@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { OssUploader } from '../utils/oss-uploader';
+import { saveLog } from '../utils/oss-uploader';
 
 /**
  * 敏感字段列表（全量掩码：替换为 ***）
@@ -70,6 +70,9 @@ const SENSITIVE_QUERY_PARAMS = new Set([
   'apisecret',
 ]);
 
+/** 请求/响应体最大记录尺寸（1MB），超出则截断 */
+const MAX_BODY_SIZE = 1 * 1024 * 1024;
+
 /**
  * 对敏感字符串做全量掩码
  */
@@ -123,6 +126,10 @@ function sanitizeValue(key: string | undefined, value: any, depth = 0): any {
     // 检查字符串中是否包含常见的密钥模式
     if (looksLikeSecret(value)) {
       return fullMask();
+    }
+    // 超长字符串截断
+    if (value.length > MAX_BODY_SIZE) {
+      return value.slice(0, MAX_BODY_SIZE) + '...[TRUNCATED]';
     }
     return value;
   }
@@ -230,7 +237,6 @@ export interface RequestLog {
 @Injectable()
 export class SensitiveDataInterceptor implements NestInterceptor {
   private readonly logger = new Logger(SensitiveDataInterceptor.name);
-  private readonly uploader = OssUploader.getInstance();
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
@@ -309,9 +315,9 @@ export class SensitiveDataInterceptor implements NestInterceptor {
     const key = ossKey(log.requestId);
     const body = JSON.stringify(log);
 
-    this.uploader.upload(key, body).catch((err) => {
+    saveLog(key, body).catch((err) => {
       this.logger.error(
-        `Failed to upload request log [${log.requestId}]: ${err.message}`,
+        `Failed to save request log [${log.requestId}]: ${err.message}`,
       );
     });
   }
