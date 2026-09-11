@@ -52,6 +52,60 @@ $:
                 script:
                     - chmod +x /workspace/install_agents.sh
                     - /workspace/install_agents.sh
+pull_request:
+    - stages:
+        - name: 安装依赖
+          image: docker.cnb.cool/xmzzuzhi/cnb-docker/node:0.0.1
+          script:
+            - yarn install --frozen-lockfile
+        - name: 运行单元测试并生成覆盖率报告
+          image: docker.cnb.cool/xmzzuzhi/cnb-docker/node:0.0.1
+          script:
+            - yarn test:cov -- --passWithNoTests
+        - name: 上报代码覆盖率到CNB
+          type: testing:coverage
+          options:
+            pattern: coverage/lcov.info
+            allowExts: .ts,.js
+            lang: js
+            breakIfNoCoverage: false
+
+pull_request.update:
+    - stages:
+        - name: 安装依赖
+          image: docker.cnb.cool/xmzzuzhi/cnb-docker/node:0.0.1
+          script:
+            - yarn install --frozen-lockfile
+        - name: 运行单元测试并生成覆盖率报告
+          image: docker.cnb.cool/xmzzuzhi/cnb-docker/node:0.0.1
+          script:
+            - yarn test:cov -- --passWithNoTests
+        - name: 上报代码覆盖率到CNB
+          type: testing:coverage
+          options:
+            pattern: coverage/lcov.info
+            allowExts: .ts,.js
+            lang: js
+            breakIfNoCoverage: false
+
+pull_request.target:
+    - stages:
+        - name: 安装依赖
+          image: docker.cnb.cool/xmzzuzhi/cnb-docker/node:0.0.1
+          script:
+            - yarn install --frozen-lockfile
+        - name: 运行单元测试并生成覆盖率报告
+          image: docker.cnb.cool/xmzzuzhi/cnb-docker/node:0.0.1
+          script:
+            - yarn test:cov -- --passWithNoTests
+        - name: 上报代码覆盖率到CNB
+          type: testing:coverage
+          options:
+            pattern: coverage/lcov.info
+            allowExts: .ts,.js
+            lang: js
+            breakIfNoCoverage: false
+
 main:
   push:
     - services:
