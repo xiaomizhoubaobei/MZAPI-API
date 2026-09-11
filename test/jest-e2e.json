@@ -6,6 +6,14 @@
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
+  "globals": {
+    "ts-jest": {
+      "tsconfig": {
+        "allowJs": true
+      }
+    }
+  },
+  "transformIgnorePatterns": ["node_modules/(?!uuid)"],
   "reporters": [
     "default",
     ["jest-junit", {

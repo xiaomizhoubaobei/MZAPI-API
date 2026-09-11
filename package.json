@@ -29,7 +29,7 @@
     "openai": "^4.80.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.2.0",
-    "uuid": "^11.1.1"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.24",
@@ -78,6 +78,16 @@
           "titleTemplate": "{title}"
         }
       ]
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsconfig": {
+          "allowJs": true
+        }
+      }
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!uuid)"
     ]
   },
   "jest-junit": {
