@@ -124,3 +124,18 @@ main:
             git_user: ${GIT_USERNAME}
             git_email: ${GIT_EMAIL}
             force: true
+        # 合并后跑一次单测并归档覆盖率基线；allowFailure 保证同步不因测试失败被阻断
+        - name: 运行单元测试并生成覆盖率报告
+          image: docker.cnb.cool/xmzzuzhi/cnb-docker/node:0.0.1
+          allowFailure: true
+          script:
+            - yarn install --frozen-lockfile
+            - yarn test:cov -- --passWithNoTests
+        - name: 上报代码覆盖率到CNB
+          type: testing:coverage
+          allowFailure: true
+          options:
+            pattern: coverage/lcov.info
+            allowExts: .ts,.js
+            lang: js
+            breakIfNoCoverage: false
