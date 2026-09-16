@@ -2,7 +2,7 @@
 
 # 定义颜色代码
 PINK='\033[1;35m'
-NC='\033[0m' 
+NC='\033[0m'
 
 # 安装typescript专家智能体
 iflow agent add "typescript-pro" --scope global
