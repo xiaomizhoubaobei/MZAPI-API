@@ -145,13 +145,13 @@ graph LR
 graph TB
     subgraph Security["安全防护层"]
         direction TB
-        
+
         subgraph Network["网络层安全"]
             N1[HTTPS 加密传输]
             N2[TLS 1.2+]
             N3[证书验证]
         end
-        
+
         subgraph Application["应用层安全"]
             A1[CORS 策略]
             A2[安全响应头<br/>X-Frame-Options: DENY<br/>X-Content-Type-Options: nosniff<br/>X-XSS-Protection: 1 mode=block<br/>Strict-Transport-Security<br/>Content-Security-Policy]
@@ -159,7 +159,7 @@ graph TB
             A4[请求超时 30s]
             A5[仅允许 POST 请求]
         end
-        
+
         subgraph DataValidation["数据验证层"]
             D1[输入验证 class-validator]
             D2[类型检查]
@@ -167,19 +167,19 @@ graph TB
             D4[URL 格式验证]
             D5[非空验证]
         end
-        
+
         subgraph BusinessLogic["业务逻辑层"]
             B1[服务类型验证]
             B2[必填参数验证]
             B3[图片 URL 验证]
         end
-        
+
         subgraph DataTransfer["数据传输层"]
             T1[阿里云 API 加密传输]
             T2[AccessKey 认证]
             T3[请求签名]
         end
-        
+
         subgraph Monitoring["日志与监控"]
             M1[请求日志]
             M2[错误日志]
