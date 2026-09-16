@@ -15,7 +15,7 @@
 
 1.安装依赖:
 ```bash
-cd code   
+cd code
 npm install
 ```
 

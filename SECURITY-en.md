@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-We commit to maintaining security for all currently supported versions of this project. 
+We commit to maintaining security for all currently supported versions of this project.
 
 | Version  | Supported          |
 |----------|--------------------|
